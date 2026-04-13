@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) throws IOException {
         long start = System.currentTimeMillis();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\mchernysh\\Documents\\sandbox\\lng.txt")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(args[0])));
 
         List<String> allLines =  reader.lines().toList();
         Pattern pattern = Pattern.compile("^(\"\\d*\";)*\"\\d*\"$");
