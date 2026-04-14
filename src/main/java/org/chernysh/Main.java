@@ -51,7 +51,9 @@ public class Main {
                 if (matrix.get(row).size() <= col) continue;
 
                 String columnValue = matrix.get(row).get(col);
-                if (columnValue != null && !columnValue.trim().isEmpty())
+                Pattern patt = Pattern.compile("\\d+");
+                Matcher mat = patt.matcher(columnValue);
+                if (mat.find())
                     valueToRows.computeIfAbsent(columnValue, k -> new ArrayList<>()).add(row);
             }
 
