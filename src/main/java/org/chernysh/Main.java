@@ -3,11 +3,7 @@ package org.chernysh;
 import org.chernysh.dsu.DSU;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,10 +11,11 @@ public class Main {
     public static void main(String[] args) throws IOException {
         long start = System.currentTimeMillis();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(args[0])));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\mchernysh\\Documents\\sandbox\\lng.txt")));
 
         List<String> allLines =  reader.lines().toList();
         Pattern pattern = Pattern.compile("^(\"\\d*\";)*\"\\d*\"$");
+        SortedBySizeMap sortedMap = new SortedBySizeMap();
 
         Map<String,Boolean> uniqMap = new HashMap<>();
         allLines.forEach(line -> {
@@ -85,23 +82,27 @@ public class Main {
         System.out.println("Количество групп: " + groupsMap.size());
         System.out.println("Файл результата: result.txt");
 
-            AtomicInteger groupIndx = new AtomicInteger(1);
-            groupsMap.forEach((key, value) -> {
 
+
+        groupsMap.forEach(sortedMap::put);
+        Map<Integer, List<Integer>> sizeIndex = sortedMap.getSortedBySizeDesc();
+
+        int groupIndx = 1;
+        for (Map.Entry<Integer, List<Integer>> entry : sizeIndex.entrySet()) {
             try {
                 writer.write("Группа" + groupIndx + "\n");
-                value.forEach( v -> {
+                entry.getValue().forEach( v -> {
                     try {
                         writer.write("\t" + matrix.get(v).toString() + "\n");
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 });
-                groupIndx.getAndIncrement();
+                groupIndx++;
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
-        });
+        }
 
         writer.flush();
 
