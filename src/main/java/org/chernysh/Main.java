@@ -11,16 +11,17 @@ public class Main {
     public static void main(String[] args) throws IOException {
         long start = System.currentTimeMillis();
 
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream("C:\\Users\\mchernysh\\Documents\\sandbox\\lng.txt")));
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(args[0])));
 
         List<String> allLines =  reader.lines().toList();
-        Pattern pattern = Pattern.compile("^(\"\\d*\";)*\"\\d*\"$");
+        //Pattern pattern = Pattern.compile("^(?:\"\\d+(?:\\.\\d+)?\"|)(?:;(?:\"\\d+(?:\\.\\d+)?\"|))*$");
+        //Pattern pattern = Pattern.compile("^(\"\\d*\";)*\"\\d*\"$");
         SortedBySizeMap sortedMap = new SortedBySizeMap();
 
         Map<String,Boolean> uniqMap = new HashMap<>();
         allLines.forEach(line -> {
-            Matcher matcher = pattern.matcher(line);
-            if (!line.trim().isEmpty() && matcher.find()) {
+            //Matcher matcher = pattern.matcher(line);
+            if (!line.trim().isEmpty()) { //&& matcher.find()) {
                 boolean notUniq = uniqMap.containsKey(line);
                 uniqMap.put(line, notUniq);
             }
@@ -31,11 +32,11 @@ public class Main {
 
 
         for (Map.Entry<String, Boolean> entry : uniqMap.entrySet()) {
-            if (!entry.getValue()) {
+            //if (!entry.getValue()) {
                 List<String> stringSplit = List.of(entry.getKey().split(";"));
                 if (maxColumnAmount < stringSplit.size()) maxColumnAmount = stringSplit.size();
                 matrix.add(stringSplit);
-            }
+            //}
         }
 
         DSU dsu = new DSU(matrix.size());
@@ -88,9 +89,11 @@ public class Main {
         Map<Integer, List<Integer>> sizeIndex = sortedMap.getSortedBySizeDesc();
 
         int groupIndx = 1;
+        int groupsAmount = 0;
         for (Map.Entry<Integer, List<Integer>> entry : sizeIndex.entrySet()) {
             try {
                 writer.write("Группа" + groupIndx + "\n");
+                if (entry.getValue().size() > 1) groupsAmount++;
                 entry.getValue().forEach( v -> {
                     try {
                         writer.write("\t" + matrix.get(v).toString() + "\n");
@@ -107,6 +110,7 @@ public class Main {
         writer.flush();
 
         System.out.println("Время работы программы: " + (System.currentTimeMillis() - start));
+        System.out.println(groupsAmount);
 
     }
 }
