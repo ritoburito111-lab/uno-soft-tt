@@ -14,16 +14,12 @@ public class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(args[0])));
 
         List<String> allLines =  reader.lines().toList();
-        //Pattern pattern = Pattern.compile("^(?:\"\\d+(?:\\.\\d+)?\"|)(?:;(?:\"\\d+(?:\\.\\d+)?\"|))*$");
-        //Pattern pattern = Pattern.compile("^(\"\\d*\";)*\"\\d*\"$");
         SortedBySizeMap sortedMap = new SortedBySizeMap();
 
-        Map<String,Boolean> uniqMap = new HashMap<>();
+        Set<String> stringsSet = new HashSet<>();
         allLines.forEach(line -> {
-            //Matcher matcher = pattern.matcher(line);
-            if (!line.trim().isEmpty()) { //&& matcher.find()) {
-                boolean notUniq = uniqMap.containsKey(line);
-                uniqMap.put(line, notUniq);
+            if (!line.trim().isEmpty()) {
+                stringsSet.add(line);
             }
         });
 
@@ -31,12 +27,10 @@ public class Main {
         int maxColumnAmount = 0;
 
 
-        for (Map.Entry<String, Boolean> entry : uniqMap.entrySet()) {
-            //if (!entry.getValue()) {
-                List<String> stringSplit = List.of(entry.getKey().split(";"));
+        for (String str : stringsSet) {
+                List<String> stringSplit = List.of(str.split(";"));
                 if (maxColumnAmount < stringSplit.size()) maxColumnAmount = stringSplit.size();
                 matrix.add(stringSplit);
-            //}
         }
 
         DSU dsu = new DSU(matrix.size());
@@ -57,7 +51,7 @@ public class Main {
 
             valueToRows.forEach((key, list) -> {
                 if (list.size() > 1) {
-                    int firstElem = list.get(0);
+                    int firstElem = list.getFirst();
 
                     for (int i = 1; i < list.size(); i++) {
                         dsu.unionSets(firstElem, list.get(i));
